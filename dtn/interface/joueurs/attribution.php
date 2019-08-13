@@ -113,8 +113,8 @@ if($masque == 1) $sql.= " and dtnSuiviJoueur_fk = 0";
 $sql .= " order by $ordre $sens";
 
 //ecart sur variable listejoueurs appelé
-$lstJoueurs = listJoueur($affArchive, $affPosition);
-//$lstJoueursv2 = array();
+// $lstJoueurs = listJoueur($affArchive, $affPosition);
+$lstJoueurs = array();
 foreach($conn->query($sql) as $lst){
 array_push($lstJoueurs, $lst);
 }
@@ -456,7 +456,12 @@ break;
 			
             // Entraînement du joueur
             $libelle_type_entrainement="-";
-
+            // Alpa : commenté car temps de chargement trop long
+			//$sql2 = "select * from $tbl_clubs_histo A left join $tbl_type_entrainement2 on idEntrainement = id_type_entrainement where idClubHT = ".$l["teamid"]." order by date_histo desc";
+            //$req2 = $conn->query($sql2);
+            //$ligne2 = $req2->fetch(PDO::FETCH_ASSOC);
+            //if (is_array($ligne2))
+            //extract($ligne2);
             
             // ID club HT
           	$sql3 = "select * from $tbl_clubs where idClubHT = ".$l["teamid"];
@@ -486,6 +491,15 @@ break;
             extract($ligne4);
             $role=get_role_byID($id_role,null);
             $datedumatch=substr($date_match, 0, 10);
+			
+			$AgeAnneeSQL=getCalculAgeAnneeSQL();
+			$AgeJourSQL=getCalculAgeJourSQL();
+
+			$sql = "select $tbl_joueurs.*,".$AgeAnneeSQL." as AgeAn,".$AgeJourSQL." as AgeJour 
+			from $tbl_joueurs 
+			where dtnSuiviJoueur_fk  = ".$sesUser["idAdmin"];
+			
+
 ?>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -512,7 +526,8 @@ break;
                       </div></td>
                     <td width="1" rowspan="6" bgcolor="#000000"><img src="../images/spacer.gif" width="1" height="1"></td>
                     <td width="35"><div align="center"> 
-                        <?=$l["AgeAn"]."-".$l["AgeJour"]?>
+                     <!--=$l["AgeAn"]."-".$l["AgeJour"] -->
+					 <?=$l["ageJoueur"]?>
                       </div></td>
                     <td width="1" rowspan="6" bgcolor="#000000"><img src="../images/spacer.gif" width="1" height="1"></td>
                     <td width="20"> <div align="center"> 
